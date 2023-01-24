@@ -1,0 +1,46 @@
+from typing import  List
+
+class Solution:
+    def combinationSum2(self, candidates: List[int], target: int) -> List[List[int]]:
+        #将数组进行升序排序
+        candidates.sort()
+        #结果列表
+        ans = []
+        #可能组合
+        tmp = []
+
+        def back_dfs(idx, total):
+            if total == target:
+                ans.append(tmp[::])
+                return
+
+            if total > target:
+                return
+
+            for i in range(idx, len(candidates)):
+                #限制同一层不能选中值相同的元素
+                #若有相同的元素, 优先选择靠前面的
+                if i >= idx+1 and candidates[i-1] == candidates[i]:
+                    continue
+
+                total += candidates[i]
+                tmp.append(candidates[i])
+                #和39题不同, 这里直接进入递归下一层
+                #从当前索引的下一位开始选取, 避免重复选择同个索引的元素
+                back_dfs(i+1, total)
+
+                #回溯
+                tmp.pop()
+                total -= candidates[i]
+
+        total = 0
+        back_dfs(0, total)
+        return ans
+
+
+
+S = Solution()
+candidates = [10,1,2,7,6,1,5]
+target = 8
+print(S.combinationSum2(candidates, target))
+
